@@ -1,0 +1,87 @@
+-- CreateTable
+CREATE TABLE `User` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(255) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `peran` ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
+    `nama` VARCHAR(255) NULL,
+    `fotoProfil` VARCHAR(255) NULL,
+    `bio` VARCHAR(255) NULL,
+    `dibuatPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `diubahPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    UNIQUE INDEX `email`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Kedai` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `namaKedai` VARCHAR(255) NOT NULL,
+    `deskripsi` VARCHAR(255) NULL,
+    `tipeKedai` VARCHAR(255) NULL,
+    `alamat` VARCHAR(255) NULL,
+    `kontak` VARCHAR(255) NULL,
+    `fasilitas` VARCHAR(255) NULL,
+    `gambar` VARCHAR(255) NULL,
+    `idPemilik` INTEGER NOT NULL,
+    `dibuatPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `diubahPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Jadwal` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idKedai` INTEGER NOT NULL,
+    `hari` VARCHAR(255) NOT NULL,
+    `jamBuka` VARCHAR(255) NOT NULL,
+    `jamTutup` VARCHAR(255) NOT NULL,
+    `dibuatPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `diubahPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Menu` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idKedai` INTEGER NOT NULL,
+    `nama` VARCHAR(255) NOT NULL,
+    `harga` DOUBLE NOT NULL,
+    `deskripsi` VARCHAR(191) NULL,
+    `dibuatPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `diubahPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Ulasan` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idPenulis` INTEGER NOT NULL,
+    `idKedai` INTEGER NOT NULL,
+    `komentar` VARCHAR(255) NULL,
+    `rating` INTEGER NOT NULL,
+    `dibuatPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `diubahPada` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Kedai` ADD CONSTRAINT `Kedai_idPemilik_fkey` FOREIGN KEY (`idPemilik`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Jadwal` ADD CONSTRAINT `Jadwal_idKedai_fkey` FOREIGN KEY (`idKedai`) REFERENCES `Kedai`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Menu` ADD CONSTRAINT `Menu_idKedai_fkey` FOREIGN KEY (`idKedai`) REFERENCES `Kedai`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Ulasan` ADD CONSTRAINT `Ulasan_idPenulis_fkey` FOREIGN KEY (`idPenulis`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Ulasan` ADD CONSTRAINT `Ulasan_idKedai_fkey` FOREIGN KEY (`idKedai`) REFERENCES `Kedai`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+

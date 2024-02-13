@@ -1,0 +1,8 @@
+/* Zoom on hover */
+.card-zoom:hover {
+  transform: scale(1.1);
+}
+
+.card-zoom {
+  transition: transform 0.5s;
+}

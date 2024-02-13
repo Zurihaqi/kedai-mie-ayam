@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// Tabel-tabel yang akan di buat dalam db
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique(map: "email") @db.VarChar(255)
+  password String
+  peran Role @default(USER) // Peran ada 2 User & Admin, default = User
+  nama String? @db.VarChar(255)
+  fotoProfil String? @db.VarChar(255)
+  profilPublicId String? @db.VarChar(255) // Untuk cloud storage gambar
+  bio String? @db.VarChar(255)
+  kedai Kedai[] // User memiliki kedai
+  ulasan Ulasan[] // User memiliki ulasan
+  dibuatPada DateTime @default(now()) @db.Timestamp(0)
+  diubahPada DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model Kedai {
+  id Int @id @default(autoincrement())
+  namaKedai String @db.VarChar(255)
+  deskripsi String? @db.VarChar(255)
+  alamat String? @db.VarChar(255)
+  kontak String? @db.VarChar(255)
+  fasilitas String? @db.VarChar(255)
+  gambar String? @db.VarChar(255)
+  gambarPublicId String? @db.VarChar(255) // Untuk cloud storage gambar
+  menu Menu[] // Kedai memiliki menu
+  jadwal Jadwal[] // Kedai memiliki jadwal
+  ulasan Ulasan[] // Kedai memiliki ulasan
+  pemilik User @relation(fields: [idPemilik], references: [id], onDelete: Cascade) // Pemilik kedai adalah User
+  idPemilik Int // id pemilik, atau id user yang memiliki kedai
+  dibuatPada DateTime @default(now()) @db.Timestamp(0)
+  diubahPada DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model Jadwal {
+  id Int @id @default(autoincrement())
+  kedai Kedai @relation(fields: [idKedai], references: [id], onDelete: Cascade) // Jadwal dimiliki kedai
+  idKedai Int // id kedai yang memiliki jadwal
+  hari String @db.VarChar(255)
+  jamBuka String @db.VarChar(255)
+  jamTutup String @db.VarChar(255)
+  dibuatPada DateTime @default(now()) @db.Timestamp(0)
+  diubahPada DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model Menu {
+  id Int @id @default(autoincrement())
+  kedai Kedai @relation(fields: [idKedai], references: [id], onDelete: Cascade) // Menu dimiliki kedai
+  idKedai Int // Id kedai yang memiliki menu
+  makanan String @db.VarChar(255)
+  harga String @db.VarChar(255)
+  dibuatPada DateTime @default(now()) @db.Timestamp(0)
+  diubahPada DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+model Ulasan {
+  id Int @id @default(autoincrement())
+  penulis User @relation(fields: [idPenulis], references: [id], onDelete: Cascade) // Ulasan dimiliki user
+  idPenulis Int
+  kedai Kedai @relation(fields: [idKedai], references: [id], onDelete: Cascade) // Ulasan dimiliki kedai
+  idKedai Int
+  komentar String? @db.VarChar(255)
+  rating Int
+  dibuatPada DateTime @default(now()) @db.Timestamp(0)
+  diubahPada DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+// Tanda tanya (?) di sebelah tipe data seperti String? menunjukkan data opsional, tidak wajib diisi.
