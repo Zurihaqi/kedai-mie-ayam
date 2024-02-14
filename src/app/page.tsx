@@ -1,12 +1,10 @@
 "use client";
 
 import * as React from "react";
-import PageLayout from "@/components/PageLayout/Layout";
 import Image from "next/image";
 import Link from "next/link";
 import Card from "@/components/Card/Card";
 import ReviewCard from "@/components/Card/ReviewCard";
-import Toast from "react-hot-toast";
 
 import ReactOwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
@@ -20,7 +18,7 @@ export default function Home() {
   const review = [];
 
   return (
-    <PageLayout>
+    <>
       <section className="bg-gradient-to-b from-[#F59E0B] to-amber-400 rounded-b-3xl overflow-hidden">
         <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
           <div className="mr-auto place-self-center lg:col-span-7">
@@ -54,12 +52,12 @@ export default function Home() {
                   ></path>
                 </svg>
               </Link>
-              <a
-                href="#"
+              <Link
+                href="/kedai/post/"
                 className="animated-underline inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-black rounded-lg"
               >
                 Daftarkan Kedai Anda
-              </a>
+              </Link>
             </AOS>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
@@ -188,6 +186,6 @@ export default function Home() {
           ))}
         </ReactOwlCarousel>
       </div>
-    </PageLayout>
+    </>
   );
 }

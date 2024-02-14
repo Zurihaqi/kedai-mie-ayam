@@ -148,7 +148,7 @@ export default function Header() {
     >
       <nav className="bg-amber-500 border-gray-200 px-4 lg:px-6 py-2.5">
         <div className="grid justify-items-stretch lg:flex lg:justify-between mx-auto max-w-screen-xl">
-          <a href="/">
+          <Link href="/">
             <div className="bg-[#FFD15D] absolute top-0" style={{ height: 80 }}>
               <Image
                 width={100}
@@ -160,7 +160,7 @@ export default function Header() {
                 priority={true}
               />
             </div>
-          </a>
+          </Link>
           <div className="flex items-center lg:order-2 justify-self-end">
             {status === "loading" && (
               <Image src="/spinner.gif" alt="loading" width={30} height={30} />

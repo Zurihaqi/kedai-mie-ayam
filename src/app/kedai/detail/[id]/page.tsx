@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import PageLayout from "@/components/PageLayout/Layout";
 import ReviewSection from "@/components/ReviewSection/ReviewSection";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -114,7 +113,7 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
   };
 
   return (
-    <PageLayout>
+    <>
       {(!dataKedai && (
         <div className="p-12 text-center">
           <Image
@@ -130,9 +129,9 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
       )) || (
         <div className="flex lg:flex-row flex-col-reverse max-w-[1000px] mx-auto lg:gap-4 gap-2">
           <div className="lg:flex flex-col lg:mt-12 hidden">
-            <div className="bg-gray-100 mx-auto p-2 px-4 rounded-lg shadow-md mb-4 lg:w-[300px] w-[350px] max-h-max">
+            <div className="text-center bg-gray-100 mx-auto p-2 px-4 rounded-lg shadow-md mb-4 lg:w-[300px] w-[350px] max-h-max">
               <p className="font-bold">Diposting oleh:</p>
-              <div className="flex flex-wrap hover:underline underline-offset-2 w-fit">
+              <div className="flex flex-wrap hover:underline underline-offset-2 w-fit mx-auto">
                 <Image
                   width={30}
                   height={30}
@@ -216,7 +215,7 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
               <p className="mt-2 border-b-2 border-gray-500 pb-2 sm:border-none sm:pb-0">
                 {dataKedai?.kedai?.deskripsi || "Tidak ada deskripsi"}
               </p>
-              <div className="sm:hidden block mt-2">
+              <div className="lg:hidden block mt-2">
                 <p className="font-bold">Diposting oleh:</p>
                 <div className="flex flex-wrap hover:underline underline-offset-2 w-fit">
                   <Image
@@ -254,6 +253,6 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
         </div>
       )}
       <ReviewSection />
-    </PageLayout>
+    </>
   );
 }

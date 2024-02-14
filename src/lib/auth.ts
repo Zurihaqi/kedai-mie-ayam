@@ -15,6 +15,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 30 * 60,
   },
   providers: [
     // GoogleProvider({
@@ -63,7 +64,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    jwt: ({ token, user }) => {
+    jwt: ({ token, user, trigger, session }) => {
+      if (trigger === "update") {
+        token.picture = session.image;
+        token.name = session.name;
+        token.email = session.email;
+      }
       if (user) {
         return {
           ...token,

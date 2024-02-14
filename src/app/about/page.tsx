@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
-import PageLayout from "@/components/PageLayout/Layout";
 import Image from "next/image";
 import Logo from "../../../public/logo.png";
 
 export default function About() {
   return (
-    <PageLayout>
+    <>
       <div className="bg-[#FFD15D]">
         <Image
           src={Logo}
@@ -53,6 +52,6 @@ export default function About() {
           vulputate rutrum odio. Nunc tincidunt eget nisl nec vehicula.
         </p>
       </div>
-    </PageLayout>
+    </>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import PageLayout from "@/components/PageLayout/Layout";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Card from "@/components/Card/Card";
@@ -23,7 +22,7 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
   const [updatedDate, setUpdatedDate] = React.useState(null);
   const [averageKedaiRating, setAverageKedaiRating] = React.useState(null);
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const modalToggle = () => {
     setShowModal(!showModal);
@@ -93,7 +92,7 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
   };
 
   return (
-    <PageLayout>
+    <>
       {(!userData && (
         <div className="p-12 text-center">
           <Image
@@ -138,12 +137,12 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
                   <div className="text-center">
                     <p>{userData.user.kedai.length} Kedai</p>
                     <p>{userData.user.ulasan.length} Ulasan</p>
-                    <p className="text-center mt-4 font-semibold">
+                    <p className="text-center mt-4 font-semibold text-gray-500">
                       Bergabung: {createdDate}
                     </p>
-                    <p className="text-center font-semibold">
+                    {/* <p className="text-center font-semibold">
                       Diperbarui: {updatedDate}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
                 <div className="lg:min-w-[300px] border-l-2 border-gray-500 px-4 flex flex-col gap-4">
@@ -187,7 +186,6 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
               {(userData.user.kedai.length > 0 && (
                 <div className="flex flex-row overflow-hidden">
                   <ReactOwlCarousel
-                    style={{ maxWidth: 800 }}
                     className="mx-auto my-8"
                     responsive={{
                       0: {
@@ -198,7 +196,9 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
                       },
                       640: {
                         items: 3,
-                        mergeFit: true,
+                      },
+                      1024: {
+                        items: 5,
                       },
                     }}
                   >
@@ -247,6 +247,6 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
           </div>
         </div>
       )}
-    </PageLayout>
+    </>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import PageLayout from "@/components/PageLayout/Layout";
 import Card from "@/components/Card/Card";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -17,15 +16,21 @@ export default function Search() {
 
   React.useEffect(() => {
     const getKedaiData = async () => {
+      setIsloading(true);
       try {
         const kedai = await fetch(`/api/kedai/`, {
           method: "GET",
         });
 
         const res = await kedai.json();
-        setAverageRating(calculateAverageRating(kedai));
-        setSearchResult(res.kedai);
-        return setDataKedai(res);
+
+        if (res) {
+          setAverageRating(calculateAverageRating(kedai));
+          setSearchResult(res.kedai);
+          setIsloading(false);
+
+          return setDataKedai(res);
+        }
       } catch (error: any) {
         return toast.error(error.message);
       }
@@ -43,20 +48,20 @@ export default function Search() {
     let sortedData = [...dataToSort];
 
     switch (sortBy) {
-      // Ulasan terbanyak
-      case "MostReviews":
+      // Kedai terbaru
+      case "Newest":
         sortedData.sort((a, b) => {
-          const reviewsA = a.ulasan ? a.ulasan.length : 0;
-          const reviewsB = b.ulasan ? b.ulasan.length : 0;
-          return reviewsB - reviewsA;
+          const dateA = new Date(a.dibuatPada).getTime();
+          const dateB = new Date(b.dibuatPada).getTime();
+          return dateB - dateA;
         });
         break;
-      // Ulasan paling sedikit
-      case "LessReviews":
+      // Kedai terlama
+      case "Oldest":
         sortedData.sort((a, b) => {
-          const reviewsA = a.ulasan ? a.ulasan.length : 0;
-          const reviewsB = b.ulasan ? b.ulasan.length : 0;
-          return reviewsA - reviewsB;
+          const dateA = new Date(a.dibuatPada).getTime();
+          const dateB = new Date(b.dibuatPada).getTime();
+          return dateA - dateB;
         });
         break;
       // Rating tertinggi
@@ -109,8 +114,10 @@ export default function Search() {
     const hasil = sequentialSearch(kataPencarian);
 
     // Simpan hasil pencarian ke state
-    setSearchResult(hasil);
-    setIsloading(false);
+    if (hasil) {
+      setSearchResult(hasil);
+      setIsloading(false);
+    }
   };
   // Proses sequential search
   const sequentialSearch = (pencarian: string) => {
@@ -138,7 +145,7 @@ export default function Search() {
   };
 
   return (
-    <PageLayout>
+    <>
       <div className="p-10">
         <form
           className="flex flex-col md:flex-row gap-3 justify-center"
@@ -175,8 +182,8 @@ export default function Search() {
             <option value="All" defaultChecked>
               Urutkan
             </option>
-            <option value="MostReviews">Ulasan Paling Banyak</option>
-            <option value="LessReviews">Ulasan Paling Sedikit</option>
+            <option value="Newest">Terbaru</option>
+            <option value="Oldest">Terlama</option>
             <option value="HighestRated">Rating Tertinggi</option>
             <option value="LowestRated">Rating Terendah</option>
           </select>
@@ -217,6 +224,6 @@ export default function Search() {
             </h1>
           </div>
         ))}
-    </PageLayout>
+    </>
   );
 }

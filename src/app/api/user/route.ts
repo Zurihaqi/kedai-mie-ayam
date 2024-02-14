@@ -45,14 +45,15 @@ export async function PATCH(req: NextRequest) {
   try {
     const formData = await req.formData();
     const nama = formData.get("nama") as string;
-    const email = formData.get("email");
-    const bio = formData.get("bio");
+    const email = formData.get("email") as string;
+    const bio = formData.get("bio") as string;
     const fotoProfil = formData.get("fotoProfil") as File;
+    let capitalizedNama: string;
     let publicId: string;
     let uploadedImage: any;
 
     if (nama) {
-      nama.replace(/(\b[a-z](?!\s))/g, function (x: string) {
+      capitalizedNama = nama.replace(/(\b[a-z](?!\s))/g, function (x: string) {
         return x.toUpperCase();
       });
     }
@@ -60,7 +61,21 @@ export async function PATCH(req: NextRequest) {
     const userExist = await prisma.user.findUnique({
       where: { id: session.user?.id },
     });
-    if (!userExist) throw new Error("User tidak ditemukan.");
+    if (!userExist) throw new Error("Pengguna tidak ditemukan.");
+
+    if (email) {
+      const userWithEmail = await prisma.user.findFirst({
+        where: {
+          email: email,
+          NOT: {
+            id: session.user?.id,
+          },
+        },
+      });
+      if (userWithEmail) {
+        throw new Error("Email sudah terdaftar oleh pengguna lain.");
+      }
+    }
 
     if (fotoProfil) {
       const fileBuffer = await fotoProfil.arrayBuffer();
@@ -97,7 +112,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const updateData: { [key: string]: any } = {};
-    if (nama) updateData.nama = nama;
+    if (nama) updateData.nama = capitalizedNama;
     if (email) updateData.email = email;
     if (bio) updateData.bio = bio;
     if (uploadedImage) updateData.fotoProfil = uploadedImage;
@@ -105,15 +120,19 @@ export async function PATCH(req: NextRequest) {
 
     validateBody.parse(updateData);
 
-    await prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: session.user?.id },
       data: updateData,
     });
 
-    return NextResponse.json(
-      { success: "Berhasil mengupdate profil." },
-      { status: 200 }
-    );
+    if (user) {
+      return NextResponse.json(
+        {
+          user: { name: user.nama, email: user.email, image: user.fotoProfil },
+        },
+        { status: 200 }
+      );
+    }
   } catch (error: any) {
     const errorMessage =
       error instanceof ZodError ? formatZodError(error) : error.message;

@@ -1,9 +1,12 @@
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
-config.autoAddCss = false; /* eslint-disable import/first */
-
+import { Toaster } from "react-hot-toast";
 import { NextAuthProvider } from "./provider";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
+import NextTopLoader from "nextjs-toploader";
+config.autoAddCss = false; /* eslint-disable import/first */
 
 export const metadata = {
   title: "Kedai Mie Ayam",
@@ -18,7 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <NextAuthProvider>{children}</NextAuthProvider>
+        <NextAuthProvider>
+          <Toaster position="top-center" />
+          <Header />
+          <NextTopLoader showSpinner={false} />
+          <div className="min-h-screen">{children}</div>
+          <Footer />
+        </NextAuthProvider>
       </body>
     </html>
   );

@@ -25,9 +25,9 @@ export default function Card({ id, image, alt, title, rating, reviews }) {
           <Link href={`/kedai/detail/${id}`}>
             <button
               aria-label="read-more-btn"
-              className="hidden group-hover:block bg-gray-300 text-white hover:bg-opacity-70 bg-opacity-30 p-2 rounded transition-opacity duration-300"
+              className="hidden group-hover:block bg-gray-500 text-white hover:bg-opacity-70 bg-opacity-30 p-2 rounded transition-opacity duration-300"
             >
-              Lihat Rincian
+              Rincian
             </button>
           </Link>
         </div>

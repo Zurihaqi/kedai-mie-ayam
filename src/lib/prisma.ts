@@ -4,7 +4,7 @@ import { withExclude } from "prisma-exclude";
 const globalForPrisma = global as { prisma?: PrismaClient };
 
 const prismaClientWithExclude = withExclude(
-  globalForPrisma.prisma ?? new PrismaClient({ log: ["query"] })
+  globalForPrisma.prisma ?? new PrismaClient()
 );
 
 export const prisma = prismaClientWithExclude;
