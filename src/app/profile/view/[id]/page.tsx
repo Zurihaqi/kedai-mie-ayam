@@ -84,7 +84,19 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
     }
   };
 
-  if (!userData) return;
+  if (!userData)
+    return (
+      <div className="mx-auto p-12 w-fit text-center">
+        <Image
+          src="/spinner.gif"
+          alt="loading"
+          width={50}
+          height={50}
+          style={{ width: "auto", height: "auto" }}
+        />
+        <h1 className="font-bold text-xl">Memuat...</h1>
+      </div>
+    );
 
   return (
     <div>

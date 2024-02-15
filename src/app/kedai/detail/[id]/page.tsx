@@ -159,7 +159,19 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
     }
   };
 
-  if (!dataKedai || !dataUlasan) return;
+  if (!dataKedai || !dataUlasan)
+    return (
+      <div className="mx-auto p-12 w-fit text-center">
+        <Image
+          src="/spinner.gif"
+          alt="loading"
+          width={50}
+          height={50}
+          style={{ width: "auto", height: "auto" }}
+        />
+        <h1 className="font-bold text-xl">Memuat...</h1>
+      </div>
+    );
 
   return (
     <>

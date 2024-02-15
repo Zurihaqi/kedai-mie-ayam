@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE `menu` MODIFY `harga` VARCHAR(255) NOT NULL,
-    MODIFY `makanan` VARCHAR(255) NOT NULL;

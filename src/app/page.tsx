@@ -142,17 +142,30 @@ export default function Home() {
             },
           }}
         >
-          {kedai.map((kedai, index) => (
-            <Card
-              key={kedai.id}
-              id={kedai.id}
-              image={kedai.gambar}
-              alt={kedai.namaKedai + "_alt"}
-              title={kedai.namaKedai}
-              rating={kedai.averageRating}
-              reviews={kedai.ulasan?.length}
-            />
-          ))}
+          {kedai ? (
+            kedai.map((kedai, index) => (
+              <Card
+                key={kedai.id}
+                id={kedai.id}
+                image={kedai.gambar}
+                alt={kedai.namaKedai + "_alt"}
+                title={kedai.namaKedai}
+                rating={kedai.averageRating}
+                reviews={kedai.ulasan?.length}
+              />
+            ))
+          ) : (
+            <div className="mx-auto p-12 w-fit text-center">
+              <Image
+                src="/spinner.gif"
+                alt="loading"
+                width={50}
+                height={50}
+                style={{ width: "auto", height: "auto" }}
+              />
+              <h1 className="font-bold text-xl">Memuat...</h1>
+            </div>
+          )}
         </ReactOwlCarousel>
       </div>
 
@@ -196,17 +209,30 @@ export default function Home() {
           }}
           loop={true}
         >
-          {review.map((ulasan, index) => (
-            <ReviewCard
-              key={index}
-              id={ulasan.penulis.id}
-              avatar={ulasan.penulis.fotoProfil}
-              name={ulasan.penulis.nama}
-              date={new Date(ulasan.dibuatPada).toLocaleDateString("id-ID")}
-              review={ulasan.komentar}
-              rating={ulasan.rating}
-            />
-          ))}
+          {review ? (
+            review.map((ulasan, index) => (
+              <ReviewCard
+                key={index}
+                id={ulasan.penulis.id}
+                avatar={ulasan.penulis.fotoProfil}
+                name={ulasan.penulis.nama}
+                date={new Date(ulasan.dibuatPada).toLocaleDateString("id-ID")}
+                review={ulasan.komentar}
+                rating={ulasan.rating}
+              />
+            ))
+          ) : (
+            <div className="mx-auto p-12 w-fit text-center">
+              <Image
+                src="/spinner.gif"
+                alt="loading"
+                width={50}
+                height={50}
+                style={{ width: "auto", height: "auto" }}
+              />
+              <h1 className="font-bold text-xl">Memuat...</h1>
+            </div>
+          )}
         </ReactOwlCarousel>
       </div>
     </>

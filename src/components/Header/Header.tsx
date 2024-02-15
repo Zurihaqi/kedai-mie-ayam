@@ -62,7 +62,7 @@ const DropdownMenu = () => {
         className="flex items-center py-1 rounded-xl"
       >
         <Image
-          src={data.user?.image ? data.user?.image : "/spinner.gif"}
+          src={data.user?.image ? data.user?.image : "/default_pfp.png"}
           width={25}
           height={20}
           style={{ width: "auto", height: "auto" }}

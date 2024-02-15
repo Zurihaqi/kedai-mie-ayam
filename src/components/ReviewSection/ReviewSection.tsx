@@ -328,7 +328,19 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
     }
   };
 
-  if (!ulasanData) return;
+  if (!ulasanData)
+    return (
+      <div className="mx-auto p-12 w-fit text-center">
+        <Image
+          src="/spinner.gif"
+          alt="loading"
+          width={50}
+          height={50}
+          style={{ width: "auto", height: "auto" }}
+        />
+        <h1 className="font-bold text-xl">Memuat...</h1>
+      </div>
+    );
 
   return (
     <>
@@ -399,15 +411,16 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
                   onClick={onSubmit}
                   disabled={isLoading}
                 >
-                  {(isLoading && (
+                  {isLoading ? (
                     <Image
                       src="/spinner.gif"
                       alt="loading"
                       width={20}
                       height={20}
                     />
-                  )) ||
-                    "Kirim"}
+                  ) : (
+                    "Kirim"
+                  )}
                 </button>
               </div>
             </div>
