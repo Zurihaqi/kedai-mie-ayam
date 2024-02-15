@@ -316,7 +316,8 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
 
       if (postUlasan.ok) {
         setIsLoading(false);
-        event.target.reset();
+        setReview("");
+        setRating(0);
 
         updateUlasanData();
 
