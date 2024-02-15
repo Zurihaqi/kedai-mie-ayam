@@ -2,58 +2,53 @@
 
 import * as React from "react";
 import Image from "next/image";
+import "animate.css";
 
 export default function Modal({
-  show,
   message,
   optionYes,
   optionNo,
   functionYes,
   isLoading,
+  closeModal,
+  showModal,
 }) {
-  const [showModal, setShowModal] = React.useState(false);
-  const modalRef = React.useRef(null);
+  const outerRef = React.useRef(null);
+  const innerRef = React.useRef(null);
 
   React.useEffect(() => {
-    setShowModal((show: boolean) => !show);
-  }, [show]);
-
-  React.useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setShowModal(false);
+    const handleClickOutside = (event: any) => {
+      if (
+        outerRef.current &&
+        innerRef.current &&
+        outerRef.current.contains(innerRef.current) &&
+        !innerRef.current.contains(event.target)
+      ) {
+        closeModal();
       }
-    }
+    };
 
-    if (showModal) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showModal]);
-
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
+  }, [showModal, closeModal]);
 
   return (
     <div
-      ref={modalRef}
-      className={`fixed inset-x-0 max-w-max mx-auto z-50 justify-center items-center ${
-        showModal ? "block" : "hidden"
-      }`}
+      ref={outerRef}
+      className={`${
+        showModal ? "flex" : "hidden"
+      } fixed top-0 left-0 right-0 bottom-0 justify-center items-center bg-black bg-opacity-50 z-50`}
     >
-      <div className="relative p-4 w-full max-w-md max-h-full">
+      <div ref={innerRef} className="relative p-4 w-full max-w-md max-h-full">
         <div className="relative bg-white rounded-lg shadow">
           <button
             type="button"
             className="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
             data-modal-hide="popup-modal"
-            onClick={toggleModal}
+            onClick={closeModal}
           >
             <svg
               className="w-3 h-3"
@@ -112,7 +107,7 @@ export default function Modal({
               data-modal-hide="popup-modal"
               type="button"
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10"
-              onClick={toggleModal}
+              onClick={closeModal}
             >
               {optionNo}
             </button>

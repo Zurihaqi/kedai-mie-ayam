@@ -9,6 +9,8 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Modal from "@/components/Modal/Modal";
+import { useRouter } from "next/navigation";
 
 const DetailedInfo = ({
   hari,
@@ -74,10 +76,21 @@ const DetailedInfo = ({
 
 export default function KedaiDetail({ params }: { params: { id: string } }) {
   const [dataKedai, setDataKedai] = React.useState(null);
+  const [dataUlasan, setDataUlasan] = React.useState([]);
+  const [averageRating, setAverageRating] = React.useState(0);
   const [createdDate, setCreatedDate] = React.useState(null);
-  const [averageRating, setAverageRating] = React.useState(null);
-
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
   const { data } = useSession();
+  const router = useRouter();
+
+  const modalToggle = () => {
+    setShowModal(!showModal);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   React.useEffect(() => {
     const getKedaiData = async () => {
@@ -87,51 +100,177 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
         });
 
         const res = await kedai.json();
-        setCreatedDate(new Date(res.kedai.dibuatPada).toLocaleDateString());
 
-        setAverageRating(calculateAverageRating(res.kedai));
+        if (kedai.ok) {
+          setCreatedDate(
+            new Date(res.kedai.dibuatPada).toLocaleDateString("id-ID")
+          );
 
-        return setDataKedai(res);
+          return setDataKedai(res);
+        }
+
+        throw new Error(res.error);
       } catch (error: any) {
         return toast.error(error.message);
       }
     };
 
+    const getUlasanData = async () => {
+      try {
+        const ulasan = await fetch(`/api/ulasan?id=${params.id}`, {
+          method: "GET",
+        });
+
+        const res = await ulasan.json();
+
+        if (ulasan.ok) {
+          setAverageRating(res.ulasan.averageRating);
+          return setDataUlasan(res.ulasan.ulasan);
+        }
+
+        throw new Error(res.error);
+      } catch (error: any) {
+        return toast.error(error.message);
+      }
+    };
+
+    getUlasanData();
     getKedaiData();
   }, []);
 
-  const calculateAverageRating = (kedai) => {
-    if (!kedai.ulasan || kedai.ulasan.length === 0) return 0;
+  const handleDeleteButton = async () => {
+    setIsLoading(true);
+    try {
+      const request = await fetch(`/api/kedai?id=${params.id}`, {
+        method: "DELETE",
+      });
 
-    let totalRating = 0;
-    kedai.ulasan.forEach((ulasan) => {
-      totalRating += ulasan.rating;
-    });
+      if (!request.ok) throw new Error("Terjadi kesalahan, Coba lagi nanti.");
 
-    const averageRating = totalRating / kedai.ulasan?.rating?.length;
-    return averageRating;
+      setIsLoading(false);
+      setShowModal(false);
+      return Promise.resolve(router.push("/search")).then(() =>
+        toast.success("Berhasil menghapus kedai!")
+      );
+    } catch (error: any) {
+      setIsLoading(false);
+      setShowModal(false);
+      return toast.error(error.message);
+    }
   };
+
+  if (!dataKedai || !dataUlasan) return;
 
   return (
     <>
-      {(!dataKedai && (
-        <div className="p-12 text-center">
-          <Image
-            src="/spinner.gif"
-            alt="loading"
-            width={100}
-            height={100}
-            style={{ width: "auto", height: "auto" }}
-            className="mx-auto"
-          />
-          <h1 className="text-3xl font-bold">Memuat...</h1>
+      <Modal
+        closeModal={closeModal}
+        showModal={showModal}
+        message="Yakin ingin menghapus kedai ini?"
+        optionYes="Ya, Hapus"
+        optionNo="Batalkan"
+        functionYes={handleDeleteButton}
+        isLoading={isLoading}
+      />
+      <div className="flex lg:flex-row flex-col-reverse max-w-[1000px] mx-auto lg:gap-4 gap-2">
+        <div className="lg:flex flex-col lg:mt-12 hidden">
+          <div className="text-center bg-gray-100 mx-auto p-2 px-4 rounded-lg shadow-md mb-4 lg:w-[300px] w-[350px] max-h-max">
+            <p className="font-bold">Diposting oleh:</p>
+            <div className="flex flex-wrap hover:underline underline-offset-2 w-fit mx-auto">
+              <Image
+                width={30}
+                height={30}
+                src={
+                  dataKedai?.kedai?.pemilik?.fotoProfil || "/default_pfp.png"
+                }
+                alt="author"
+                className="rounded-full my-2 w-full"
+                style={{ width: "auto", height: "auto" }}
+              />
+              <Link
+                href={`/profile/view/${dataKedai.kedai.idPemilik}`}
+                className="font-bold self-center mx-2"
+              >
+                <span>{dataKedai?.kedai?.pemilik?.nama}</span>
+              </Link>
+            </div>
+            <span className="text-sm text-gray-500">Pada {createdDate}</span>
+          </div>
+          <div className="bg-gray-100 mx-auto p-6 rounded-lg shadow-md mb-4 lg:w-[300px] w-[350px] h-fit">
+            <DetailedInfo
+              hari={dataKedai.kedai.jadwal[0].hari}
+              jamBuka={dataKedai.kedai.jadwal[0].jamBuka}
+              jamTutup={dataKedai.kedai.jadwal[0].jamTutup}
+              kontak={dataKedai.kedai.kontak}
+              alamat={dataKedai.kedai.alamat}
+              fasilitas={dataKedai.kedai.fasilitas}
+              menu={dataKedai.kedai.menu[0]}
+            />
+          </div>
+          {dataKedai.kedai.idPemilik === data?.user?.id && (
+            <div className="grid grid-cols-2 justify-items-center bg-gray-100 rounded-lg p-6 shadow-md">
+              <Link href={`/kedai/edit/${dataKedai.kedai.id}`}>
+                <button className="w-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  Edit Kedai
+                </button>
+              </Link>
+              <button
+                onClick={modalToggle}
+                className="w-fit bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Hapus Kedai
+              </button>
+            </div>
+          )}
         </div>
-      )) || (
-        <div className="flex lg:flex-row flex-col-reverse max-w-[1000px] mx-auto lg:gap-4 gap-2">
-          <div className="lg:flex flex-col lg:mt-12 hidden">
-            <div className="text-center bg-gray-100 mx-auto p-2 px-4 rounded-lg shadow-md mb-4 lg:w-[300px] w-[350px] max-h-max">
+
+        {/* Mobile view */}
+        {dataKedai.kedai.idPemilik === data?.user?.id && (
+          <div className="w-[350px] mb-4 mx-auto block lg:hidden">
+            <div className="grid grid-cols-2 justify-items-center bg-gray-100 rounded-lg p-6 shadow-md">
+              <Link href={`/kedai/edit/${dataKedai.kedai.id}`}>
+                <button className="w-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  Edit Kedai
+                </button>
+              </Link>
+              <button
+                onClick={modalToggle}
+                className="w-fit bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Hapus Kedai
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="bg-gray-100 mx-auto mt-12 pb-6 rounded-lg shadow-md mb-2 lg:w-[800px] w-[350px]">
+          <Image
+            src={dataKedai?.kedai?.gambar || "/spinner.gif"}
+            alt="gambar_kedai"
+            width={500}
+            height={500}
+            className="rounded-xl mx-auto w-full"
+            style={{ width: "auto", height: "auto" }}
+            priority={true}
+          />
+          <div className="p-4">
+            <h1 className="font-bold lg:text-4xl text-xl border-b-2 pb-2 border-gray-500">
+              <div className="grid grid-cols-4">
+                <p className="col-span-3">{dataKedai?.kedai?.namaKedai}</p>
+                <p className="justify-self-end self-end">
+                  {averageRating}
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className="text-amber-300 mx-1"
+                  />
+                </p>
+              </div>
+            </h1>
+            <p className="mt-2 border-b-2 border-gray-500 pb-2 sm:border-none sm:pb-0">
+              {dataKedai?.kedai?.deskripsi || "Tidak ada deskripsi"}
+            </p>
+            <div className="lg:hidden block mt-2">
               <p className="font-bold">Diposting oleh:</p>
-              <div className="flex flex-wrap hover:underline underline-offset-2 w-fit mx-auto">
+              <div className="flex flex-wrap hover:underline underline-offset-2 w-fit">
                 <Image
                   width={30}
                   height={30}
@@ -149,9 +288,8 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
                   <span>{dataKedai?.kedai?.pemilik?.nama}</span>
                 </Link>
               </div>
-              <span className="text-sm text-gray-500">Pada {createdDate}</span>
-            </div>
-            <div className="bg-gray-100 mx-auto p-6 rounded-lg shadow-md mb-4 lg:w-[300px] w-[350px] h-fit">
+              <p className="text-sm text-gray-500">Pada {createdDate}</p>
+              <br />
               <DetailedInfo
                 hari={dataKedai.kedai.jadwal[0].hari}
                 jamBuka={dataKedai.kedai.jadwal[0].jamBuka}
@@ -162,97 +300,13 @@ export default function KedaiDetail({ params }: { params: { id: string } }) {
                 menu={dataKedai.kedai.menu[0]}
               />
             </div>
-            {dataKedai.kedai.idPemilik === data?.user?.id && (
-              <div className="grid grid-cols-2 justify-items-center bg-gray-100 rounded-lg p-6 shadow-md">
-                <Link href={`/kedai/edit/${dataKedai.kedai.id}`}>
-                  <button className="w-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Edit Kedai
-                  </button>
-                </Link>
-                <button className="w-fit bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                  Hapus Kedai
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile view */}
-          {dataKedai.kedai.idPemilik === data?.user?.id && (
-            <div className="w-[350px] mb-4 mx-auto block lg:hidden">
-              <div className="grid grid-cols-2 justify-items-center bg-gray-100 rounded-lg p-6 shadow-md">
-                <button className="w-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  Edit Kedai
-                </button>
-                <button className="w-fit bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                  Hapus Kedai
-                </button>
-              </div>
-            </div>
-          )}
-          <div className="bg-gray-100 mx-auto mt-12 pb-6 rounded-lg shadow-md mb-2 lg:w-[800px] w-[350px]">
-            <Image
-              src={dataKedai?.kedai?.gambar || "/spinner.gif"}
-              alt="gambar_kedai"
-              width={500}
-              height={500}
-              className="rounded-xl mx-auto w-full"
-              style={{ width: "auto", height: "auto" }}
-              priority={true}
-            />
-            <div className="p-4">
-              <h1 className="font-bold lg:text-4xl text-xl border-b-2 pb-2 border-gray-500">
-                <div className="grid grid-cols-2">
-                  {dataKedai?.kedai?.namaKedai}
-                  <p className="justify-self-end self-end">
-                    {averageRating}
-                    <FontAwesomeIcon
-                      icon={faStar}
-                      className="text-amber-300 mx-1"
-                    />
-                  </p>
-                </div>
-              </h1>
-              <p className="mt-2 border-b-2 border-gray-500 pb-2 sm:border-none sm:pb-0">
-                {dataKedai?.kedai?.deskripsi || "Tidak ada deskripsi"}
-              </p>
-              <div className="lg:hidden block mt-2">
-                <p className="font-bold">Diposting oleh:</p>
-                <div className="flex flex-wrap hover:underline underline-offset-2 w-fit">
-                  <Image
-                    width={30}
-                    height={30}
-                    src={
-                      dataKedai?.kedai?.pemilik?.fotoProfil ||
-                      "/default_pfp.png"
-                    }
-                    alt="author"
-                    className="rounded-full my-2 w-full"
-                    style={{ width: "auto", height: "auto" }}
-                  />
-                  <Link
-                    href={`/profile/view/${dataKedai.kedai.idPemilik}`}
-                    className="font-bold self-center mx-2"
-                  >
-                    <span>{dataKedai?.kedai?.pemilik?.nama}</span>
-                  </Link>
-                </div>
-                <p className="text-sm text-gray-500">Pada {createdDate}</p>
-                <br />
-                <DetailedInfo
-                  hari={dataKedai.kedai.jadwal[0].hari}
-                  jamBuka={dataKedai.kedai.jadwal[0].jamBuka}
-                  jamTutup={dataKedai.kedai.jadwal[0].jamTutup}
-                  kontak={dataKedai.kedai.kontak}
-                  alamat={dataKedai.kedai.alamat}
-                  fasilitas={dataKedai.kedai.fasilitas}
-                  menu={dataKedai.kedai.menu[0]}
-                />
-              </div>
-            </div>
           </div>
         </div>
-      )}
-      <ReviewSection />
+      </div>
+      <ReviewSection
+        initialUlasanData={dataUlasan}
+        idKedai={dataKedai.kedai.id}
+      />
     </>
   );
 }

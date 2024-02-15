@@ -4,8 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { faStarHalfAlt as halfStar } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
-export default function ReviewCard({ avatar, name, date, review, rating }) {
+export default function ReviewCard({ id, avatar, name, date, review, rating }) {
   const renderStars = () => {
     const stars = [];
     const totalStars = 5;
@@ -59,7 +60,9 @@ export default function ReviewCard({ avatar, name, date, review, rating }) {
           className="rounded-full"
         />
         <div className="mx-2 mt-1">
-          <p>{name}</p>
+          <p className="font-bold hover:underline underline-offset-2 underline-black">
+            <Link href={`profile/view/${id}`}>{name}</Link>
+          </p>
           <p>{date}</p>
         </div>
       </div>

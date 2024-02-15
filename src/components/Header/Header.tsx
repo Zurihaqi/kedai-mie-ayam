@@ -14,7 +14,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faIdCard,
   faArrowRightFromBracket,
-  faAngleUp,
+  faAngleDown,
+  faKey,
 } from "@fortawesome/free-solid-svg-icons";
 
 const DropdownMenu = () => {
@@ -78,7 +79,7 @@ const DropdownMenu = () => {
             className={`transition-transform duration-300 ${
               isDropdownOpen ? "rotate-180" : ""
             }`}
-            icon={faAngleUp}
+            icon={faAngleDown}
           />
         </span>
       </button>
@@ -100,6 +101,11 @@ const DropdownMenu = () => {
                 <FontAwesomeIcon icon={faIdCard} />
                 &nbsp;Profil
               </Link>
+            </li>
+            <li className="">
+              <button className="block w-full animated-underline py-2 font-semibold hover:bg-amber-500 transition-colors duration-300">
+                <FontAwesomeIcon icon={faKey} /> Ubah Kata Sandi
+              </button>
             </li>
             <li className="">
               <button

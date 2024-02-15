@@ -24,7 +24,7 @@ export default function RootLayout({
         <NextAuthProvider>
           <Toaster position="top-center" />
           <Header />
-          <NextTopLoader showSpinner={false} />
+          <NextTopLoader showSpinner={false} color="#dc2626" />
           <div className="min-h-screen">{children}</div>
           <Footer />
         </NextAuthProvider>

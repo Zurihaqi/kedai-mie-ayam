@@ -29,8 +29,24 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user) throw new Error("Pengguna tidak ditemukan!");
+    const kedaiWithAvgRating = user.kedai.map((k) => {
+      const totalRating = k.ulasan.reduce((acc, cur) => acc + cur.rating, 0);
+      const averageRating =
+        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0;
+      return { ...k, averageRating };
+    });
 
-    return NextResponse.json({ user }, { status: 200 });
+    const totalUserRating = user.ulasan.reduce(
+      (acc, cur) => acc + cur.rating,
+      0
+    );
+    const averageUserRating =
+      user.ulasan.length > 0 ? totalUserRating / user.ulasan.length : 0;
+
+    return NextResponse.json(
+      { user: { ...user, averageUserRating, kedai: kedaiWithAvgRating } },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
@@ -59,7 +75,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const userExist = await prisma.user.findUnique({
-      where: { id: session.user?.id },
+      where: { id: +session.user?.id },
     });
     if (!userExist) throw new Error("Pengguna tidak ditemukan.");
 
@@ -68,7 +84,7 @@ export async function PATCH(req: NextRequest) {
         where: {
           email: email,
           NOT: {
-            id: session.user?.id,
+            id: +session.user?.id,
           },
         },
       });
@@ -121,7 +137,7 @@ export async function PATCH(req: NextRequest) {
     validateBody.parse(updateData);
 
     const user = await prisma.user.update({
-      where: { id: session.user?.id },
+      where: { id: +session.user?.id },
       data: updateData,
     });
 
@@ -156,7 +172,7 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const userExist = await prisma.user.findUnique({
-      where: { id: session.user?.id },
+      where: { id: +session.user?.id },
     });
     if (!userExist) throw new Error("User tidak ditemukan.");
 
@@ -165,7 +181,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const deleteUser = await prisma.user.delete({
-      where: { id: session.user?.id },
+      where: { id: +session.user?.id },
     });
     if (deleteUser)
       return NextResponse.json(

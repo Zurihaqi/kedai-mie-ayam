@@ -13,9 +13,31 @@ import "owl.carousel/dist/assets/owl.theme.default.css";
 import "animate.css/animate.min.css";
 import { AnimationOnScroll as AOS } from "react-animation-on-scroll";
 
+import toast from "react-hot-toast";
+
 export default function Home() {
-  const kedai = [];
-  const review = [];
+  const [kedai, setKedai] = React.useState([]);
+  const [review, setReview] = React.useState([]);
+
+  React.useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await fetch("api/homepage", {
+          method: "GET",
+        });
+
+        const res = await data.json();
+        if (!data.ok) throw new Error(res.error);
+
+        setKedai(res.kedai);
+        return setReview(res.ulasan);
+      } catch (error: any) {
+        return toast.error(error.message);
+      }
+    };
+
+    getData();
+  }, []);
 
   return (
     <>
@@ -120,15 +142,15 @@ export default function Home() {
             },
           }}
         >
-          {kedai.map((item, index) => (
+          {kedai.map((kedai, index) => (
             <Card
-              key={index}
-              id={item.id}
-              image={item.image}
-              alt={item.alt}
-              title={item.title}
-              rating={item.rating}
-              reviews={item.reviews}
+              key={kedai.id}
+              id={kedai.id}
+              image={kedai.gambar}
+              alt={kedai.namaKedai + "_alt"}
+              title={kedai.namaKedai}
+              rating={kedai.averageRating}
+              reviews={kedai.ulasan?.length}
             />
           ))}
         </ReactOwlCarousel>
@@ -174,14 +196,15 @@ export default function Home() {
           }}
           loop={true}
         >
-          {review.map((item, index) => (
+          {review.map((ulasan, index) => (
             <ReviewCard
               key={index}
-              avatar={item.avatar}
-              name={item.name}
-              date={item.date}
-              review={item.review}
-              rating={item.rating}
+              id={ulasan.penulis.id}
+              avatar={ulasan.penulis.fotoProfil}
+              name={ulasan.penulis.nama}
+              date={new Date(ulasan.dibuatPada).toLocaleDateString("id-ID")}
+              review={ulasan.komentar}
+              rating={ulasan.rating}
             />
           ))}
         </ReactOwlCarousel>

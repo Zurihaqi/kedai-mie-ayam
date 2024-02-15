@@ -25,7 +25,6 @@ export default function Search() {
         const res = await kedai.json();
 
         if (res) {
-          setAverageRating(calculateAverageRating(kedai));
           setSearchResult(res.kedai);
           setIsloading(false);
 
@@ -67,16 +66,16 @@ export default function Search() {
       // Rating tertinggi
       case "HighestRated":
         sortedData.sort((a, b) => {
-          const ratingA = calculateAverageRating(a);
-          const ratingB = calculateAverageRating(b);
+          const ratingA = a.averageRating;
+          const ratingB = b.averageRating;
           return ratingB - ratingA;
         });
         break;
       // Rating terendah
       case "LowestRated":
         sortedData.sort((a, b) => {
-          const ratingA = calculateAverageRating(a);
-          const ratingB = calculateAverageRating(b);
+          const ratingA = a.averageRating;
+          const ratingB = b.averageRating;
           return ratingA - ratingB;
         });
         break;
@@ -85,19 +84,6 @@ export default function Search() {
     }
 
     return sortedData;
-  };
-
-  // Hitung rata-rata rating kedai
-  const calculateAverageRating = (kedai) => {
-    if (!kedai.ulasan || kedai.ulasan.length === 0) return 0;
-
-    let totalRating = 0;
-    kedai.ulasan.forEach((ulasan) => {
-      totalRating += ulasan.rating;
-    });
-
-    const averageRating = totalRating / kedai.ulasan?.rating?.length;
-    return averageRating;
   };
 
   const jalankanPencarian = (event: any) => {
@@ -154,7 +140,7 @@ export default function Search() {
           <div className="flex">
             <input
               type="text"
-              placeholder="Cari kedai..."
+              placeholder={isLoading ? "Mencari..." : "Cari kedai..."}
               className="w-full md:w-80 px-3 h-10 rounded-l border-2 border-gray-500 focus:outline-none focus:border-gray-500"
               onChange={(e) => setKataPencarian(e.target.value)}
             />
@@ -200,7 +186,7 @@ export default function Search() {
                   image={kedai.gambar}
                   alt={kedai.namaKedai + "_alt"}
                   title={kedai.namaKedai}
-                  rating={averageRating}
+                  rating={kedai.averageRating}
                   reviews={kedai.ulasan?.length}
                 />
               </div>

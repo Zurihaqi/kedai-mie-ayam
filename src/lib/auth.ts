@@ -8,6 +8,16 @@ import bcrypt from "bcrypt";
 // import GitHubProvider from "next-auth/providers/github";
 // import GoogleProvider from "next-auth/providers/google";
 
+declare module "next-auth" {
+  interface User {
+    id: string | number;
+  }
+
+  interface Session {
+    user: User;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   pages: {

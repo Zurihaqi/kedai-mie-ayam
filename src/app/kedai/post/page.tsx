@@ -93,12 +93,12 @@ export default function PostKedai() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    let isValid = true;
 
     if (name === "fasilitas") {
-      isValid = /^\s*(\w+\s*,\s*)*\w+\s*$/.test(value);
-      if (isValid && value) {
-        const serializedFasilitas = value.split(/\s*,\s*|\s*$/);
+      if (value) {
+        const serializedFasilitas = value
+          .split(",")
+          .map((item) => item.trim().replace(/\s+/g, "-"));
         setFormData({
           ...formData,
           [name]: serializedFasilitas,
@@ -281,6 +281,7 @@ export default function PostKedai() {
                       id="kontak"
                       name="kontak"
                       type="number"
+                      min="0"
                       autoComplete="phone"
                       placeholder="08123456789"
                       required
@@ -467,6 +468,7 @@ export default function PostKedai() {
                     id="harga"
                     name="harga"
                     type="number"
+                    min="0"
                     placeholder="10000, 15000, etc."
                     value={harga}
                     onChange={(e) => setHarga(e.target.value)}
@@ -504,7 +506,7 @@ export default function PostKedai() {
               </div>
             </div>
 
-            <div className="mt-8 w-fit mx-auto px-2">
+            <div className="mt-8 w-fit mx-auto px-8 overflow-y-auto max-h-[150px]">
               <ul>
                 {menu.map((item, index) => (
                   <li key={index} className="grid grid-cols-3 space-y-1">

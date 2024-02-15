@@ -111,7 +111,6 @@ export default function EditProfile({ params }: { params: { id: string } }) {
       });
 
       const res = await response.json();
-      console.log(res);
 
       if (response.ok) {
         setIsloading(false);
