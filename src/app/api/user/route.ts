@@ -112,7 +112,11 @@ export async function PATCH(req: NextRequest) {
             },
             (error, result) => {
               if (error) {
-                console.error("Error uploading to Cloudinary:", error);
+                console.error(
+                  "Error uploading to Cloudinary:",
+                  error,
+                  fileStream
+                );
                 reject(error);
               }
               publicId = result.public_id;
