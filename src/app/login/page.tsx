@@ -3,7 +3,6 @@
 import * as React from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -18,8 +17,7 @@ export default function Login() {
 
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = "/";
 
   const onChange = (e: any) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
