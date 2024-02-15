@@ -15,8 +15,8 @@ import { AnimationOnScroll as AOS } from "react-animation-on-scroll";
 import toast from "react-hot-toast";
 
 export default function Homepage() {
-  const [kedai, setKedai] = React.useState([]);
-  const [review, setReview] = React.useState([]);
+  const [kedai, setKedai] = React.useState(null);
+  const [review, setReview] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
   const getData = async () => {
@@ -114,7 +114,7 @@ export default function Homepage() {
             Temukan Kesempurnaan Mie Ayam: Berbagai Pilihan Kedai Terpopuler!
           </p>
         </div>
-        {kedai.length <= 0 && !isLoading && (
+        {kedai && kedai.length <= 0 && !isLoading && (
           <div className="w-[350px] mx-auto">
             <Image
               src="/empty_kedai.webp"
@@ -137,7 +137,7 @@ export default function Homepage() {
           }}
           className="mx-auto w-full"
         >
-          {kedai.length > 0 && !isLoading ? (
+          {kedai && kedai.length > 0 && !isLoading ? (
             kedai.map((kedai, index) => (
               <SwiperSlide key={index} className="my-6 px-6">
                 <Card
@@ -177,7 +177,7 @@ export default function Homepage() {
             Dunia Mie Ayam!
           </p>
         </div>
-        {review.length <= 0 && !isLoading && (
+        {review && review.length <= 0 && !isLoading && (
           <div className="w-[350px] mx-auto">
             <Image
               src="/reviewless.webp"
@@ -200,7 +200,7 @@ export default function Homepage() {
           }}
           className="mx-auto w-full"
         >
-          {review.length > 0 && !isLoading ? (
+          {review && review.length > 0 && !isLoading ? (
             review.map((ulasan, index) => (
               <SwiperSlide key={index}>
                 <ReviewCard
