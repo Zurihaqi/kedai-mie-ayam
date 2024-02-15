@@ -316,6 +316,8 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
 
       if (postUlasan.ok) {
         setIsLoading(false);
+        event.target.reset();
+
         updateUlasanData();
 
         return toast.success(response.success);
@@ -411,16 +413,7 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
                   onClick={onSubmit}
                   disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <Image
-                      src="/spinner.gif"
-                      alt="loading"
-                      width={20}
-                      height={20}
-                    />
-                  ) : (
-                    "Kirim"
-                  )}
+                  {isLoading ? "Mengirim" : "Kirim"}
                 </button>
               </div>
             </div>
