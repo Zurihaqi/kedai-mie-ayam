@@ -107,24 +107,23 @@ export async function POST(req: NextRequest) {
       var fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
 
       uploadedImage = await new Promise<string>((resolve, reject) => {
-        cloudinary.v2.uploader
-          .upload_stream(
-            {
-              resource_type: "image",
-              folder: "kedai-mie-ayam/kedai/",
-              allowed_formats: ["webp", "png", "jpg", "jpeg"],
-              transformation: "product_images",
-            },
-            (error, result) => {
-              if (error) {
-                console.error("Error uploading to Cloudinary:", error);
-                reject(error);
-              }
-              publicId = result.public_id;
-              resolve(result.secure_url);
+        cloudinary.v2.uploader.upload(
+          fileUri,
+          {
+            resource_type: "image",
+            folder: "kedai-mie-ayam/kedai/",
+            allowed_formats: ["webp", "png", "jpg", "jpeg"],
+            transformation: "product_images",
+          },
+          (error, result) => {
+            if (error) {
+              console.error("Error uploading to Cloudinary:", error);
+              reject(error);
             }
-          )
-          .end(fileUri);
+            publicId = result.public_id;
+            resolve(result.secure_url);
+          }
+        );
       });
 
       if (!uploadedImage) {
@@ -241,24 +240,23 @@ export async function PATCH(req: NextRequest) {
       var fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
 
       uploadedImage = await new Promise<string>((resolve, reject) => {
-        cloudinary.v2.uploader
-          .upload_stream(
-            {
-              resource_type: "image",
-              folder: "kedai-mie-ayam/kedai/",
-              allowed_formats: ["webp", "png", "jpg", "jpeg"],
-              transformation: "product_images",
-            },
-            (error, result) => {
-              if (error) {
-                console.error("Error uploading to Cloudinary:", error);
-                reject(error);
-              }
-              publicId = result.public_id;
-              resolve(result.secure_url);
+        cloudinary.v2.uploader.upload(
+          fileUri,
+          {
+            resource_type: "image",
+            folder: "kedai-mie-ayam/kedai/",
+            allowed_formats: ["webp", "png", "jpg", "jpeg"],
+            transformation: "product_images",
+          },
+          (error, result) => {
+            if (error) {
+              console.error("Error uploading to Cloudinary:", error);
+              reject(error);
             }
-          )
-          .end(fileUri);
+            publicId = result.public_id;
+            resolve(result.secure_url);
+          }
+        );
       });
 
       if (!uploadedImage) {

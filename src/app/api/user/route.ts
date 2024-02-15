@@ -106,24 +106,23 @@ export async function PATCH(req: NextRequest) {
       }
 
       uploadedImage = await new Promise<string>((resolve, reject) => {
-        cloudinary.v2.uploader
-          .upload_stream(
-            {
-              resource_type: "image",
-              folder: "kedai-mie-ayam/avatar/",
-              allowed_formats: ["webp", "png", "jpg", "jpeg"],
-              transformation: "profile_pic",
-            },
-            (error, result) => {
-              if (error) {
-                console.error("Error uploading to Cloudinary:", error);
-                reject(error);
-              }
-              publicId = result.public_id;
-              resolve(result.secure_url);
+        cloudinary.v2.uploader.upload(
+          fileUri,
+          {
+            resource_type: "image",
+            folder: "kedai-mie-ayam/avatar/",
+            allowed_formats: ["webp", "png", "jpg", "jpeg"],
+            transformation: "profile_pic",
+          },
+          (error, result) => {
+            if (error) {
+              console.error("Error uploading to Cloudinary:", error);
+              reject(error);
             }
-          )
-          .end(fileUri);
+            publicId = result.public_id;
+            resolve(result.secure_url);
+          }
+        );
       });
 
       if (!uploadedImage) {
