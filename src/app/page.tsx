@@ -19,28 +19,26 @@ export default function Home() {
   const [review, setReview] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const getData = async () => {
+    setIsLoading(true);
+    try {
+      const data = await fetch("api/homepage", {
+        method: "GET",
+      });
+
+      const res = await data.json();
+      if (!data.ok) throw new Error(res.error);
+
+      setIsLoading(false);
+      setKedai(res.kedai);
+      return setReview(res.ulasan);
+    } catch (error: any) {
+      setIsLoading(false);
+      return toast.error(error.message);
+    }
+  };
+
   React.useEffect(() => {
-    const getData = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetch("api/homepage", {
-          method: "GET",
-        });
-
-        const res = await data.json();
-        if (!data.ok) throw new Error(res.error);
-
-        if (res) {
-          setIsLoading(false);
-          setKedai(res.kedai);
-          return setReview(res.ulasan);
-        }
-      } catch (error: any) {
-        setIsLoading(false);
-        return toast.error(error.message);
-      }
-    };
-
     getData();
   }, []);
 

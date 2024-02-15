@@ -8,7 +8,6 @@ import "delicious-hamburgers/dist/hamburgers.min.css";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -24,13 +23,8 @@ const DropdownMenu = () => {
   const { data } = useSession();
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/login";
+  const callbackUrl = "/login";
   const currentPage = usePathname();
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prevState) => !prevState);
-  };
 
   const handleClickOutside = (event: any) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -56,9 +50,9 @@ const DropdownMenu = () => {
   }, []);
 
   return (
-    <div className="relative">
+    <div ref={dropdownRef} className="relative">
       <button
-        onClick={toggleDropdown}
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className="flex items-center py-1 rounded-xl"
       >
         <Image
@@ -84,10 +78,7 @@ const DropdownMenu = () => {
         </span>
       </button>
       {isDropdownOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute right-0 mt-2 w-48 bg-[#FFD15D] rounded-md shadow-lg z-10"
-        >
+        <div className="absolute right-0 mt-2 w-48 bg-[#FFD15D] rounded-md shadow-lg z-10">
           <ul className="py-2 text-center">
             <li className="">
               <Link
