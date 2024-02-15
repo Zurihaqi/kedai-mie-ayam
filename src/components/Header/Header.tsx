@@ -94,9 +94,16 @@ const DropdownMenu = () => {
               </Link>
             </li>
             <li className="">
-              <button className="block w-full animated-underline py-2 font-semibold hover:bg-amber-500 transition-colors duration-300">
+              <Link
+                href="/profile/change-password"
+                className={`${
+                  currentPage === `/profile/change-password`
+                    ? "active bg-amber-500"
+                    : ""
+                } block animated-underline py-2 font-semibold hover:bg-amber-500 transition-colors duration-300`}
+              >
                 <FontAwesomeIcon icon={faKey} /> Ubah Kata Sandi
-              </button>
+              </Link>
             </li>
             <li className="">
               <button

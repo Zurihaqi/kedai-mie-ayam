@@ -4,7 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 export { default } from "next-auth/middleware";
 
 export const config = {
-  matcher: ["/profile/edit", "/kedai/edit", "/kedai/post"],
+  matcher: [
+    "/profile/edit",
+    "/profile/change-password",
+    "/kedai/edit",
+    "/kedai/post",
+  ],
 };
 
 export async function middleware(request: NextRequest) {

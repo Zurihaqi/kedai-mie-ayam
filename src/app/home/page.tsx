@@ -132,7 +132,7 @@ export default function Homepage() {
         <Swiper
           centeredSlides={true}
           breakpoints={{
-            0: { slidesPerView: 1 },
+            0: { slidesPerView: 1, autoplay: true },
             640: { slidesPerView: 3 },
           }}
           className="mx-auto w-full"
@@ -195,7 +195,7 @@ export default function Homepage() {
         <Swiper
           centeredSlides={true}
           breakpoints={{
-            0: { slidesPerView: 1 },
+            0: { slidesPerView: 1, autoplay: true },
             640: { slidesPerView: 3 },
           }}
           className="mx-auto w-full"
