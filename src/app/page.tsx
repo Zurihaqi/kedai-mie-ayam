@@ -6,9 +6,8 @@ import Link from "next/link";
 import Card from "@/components/Card/Card";
 import ReviewCard from "@/components/Card/ReviewCard";
 
-import ReactOwlCarousel from "react-owl-carousel";
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 import "animate.css/animate.min.css";
 import { AnimationOnScroll as AOS } from "react-animation-on-scroll";
@@ -18,9 +17,11 @@ import toast from "react-hot-toast";
 export default function Home() {
   const [kedai, setKedai] = React.useState([]);
   const [review, setReview] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     const getData = async () => {
+      setIsLoading(true);
       try {
         const data = await fetch("api/homepage", {
           method: "GET",
@@ -29,9 +30,13 @@ export default function Home() {
         const res = await data.json();
         if (!data.ok) throw new Error(res.error);
 
-        setKedai(res.kedai);
-        return setReview(res.ulasan);
+        if (res) {
+          setIsLoading(false);
+          setKedai(res.kedai);
+          return setReview(res.ulasan);
+        }
       } catch (error: any) {
+        setIsLoading(false);
         return toast.error(error.message);
       }
     };
@@ -111,7 +116,7 @@ export default function Home() {
             Temukan Kesempurnaan Mie Ayam: Berbagai Pilihan Kedai Terpopuler!
           </p>
         </div>
-        {!(kedai.length > 0) && (
+        {kedai.length <= 0 && !isLoading && (
           <div className="w-[350px] mx-auto">
             <Image
               src="/empty_kedai.webp"
@@ -126,33 +131,27 @@ export default function Home() {
             </h1>
           </div>
         )}
-        <ReactOwlCarousel
-          style={{ maxWidth: 800 }}
-          className="mx-auto sm:mb-0 mb-8"
-          responsive={{
-            0: {
-              loop: true,
-              autoWidth: true,
-              margin: 50,
-              center: true,
-            },
-            640: {
-              items: 3,
-              mergeFit: true,
-            },
+        <Swiper
+          centeredSlides={true}
+          breakpoints={{
+            0: { slidesPerView: 1 },
+            640: { slidesPerView: 3 },
           }}
+          className="mx-auto w-full"
         >
-          {kedai ? (
+          {kedai.length > 0 && !isLoading ? (
             kedai.map((kedai, index) => (
-              <Card
-                key={kedai.id}
-                id={kedai.id}
-                image={kedai.gambar}
-                alt={kedai.namaKedai + "_alt"}
-                title={kedai.namaKedai}
-                rating={kedai.averageRating}
-                reviews={kedai.ulasan?.length}
-              />
+              <SwiperSlide key={index} className="my-6 px-6">
+                <Card
+                  key={kedai.id}
+                  id={kedai.id}
+                  image={kedai.gambar}
+                  alt={kedai.namaKedai + "_alt"}
+                  title={kedai.namaKedai}
+                  rating={kedai.averageRating}
+                  reviews={kedai.ulasan?.length}
+                />
+              </SwiperSlide>
             ))
           ) : (
             <div className="mx-auto p-12 w-fit text-center">
@@ -166,7 +165,7 @@ export default function Home() {
               <h1 className="font-bold text-xl">Memuat...</h1>
             </div>
           )}
-        </ReactOwlCarousel>
+        </Swiper>
       </div>
 
       {/* Ulasan Terkini */}
@@ -180,7 +179,7 @@ export default function Home() {
             Dunia Mie Ayam!
           </p>
         </div>
-        {!(review.length > 0) && (
+        {review.length <= 0 && !isLoading && (
           <div className="w-[350px] mx-auto">
             <Image
               src="/reviewless.webp"
@@ -195,31 +194,27 @@ export default function Home() {
             </h1>
           </div>
         )}
-        <ReactOwlCarousel
-          margin={5}
-          animateIn={true}
-          animateOut={true}
-          responsive={{
-            0: {
-              items: 1,
-            },
-            640: {
-              items: 3,
-            },
+        <Swiper
+          centeredSlides={true}
+          breakpoints={{
+            0: { slidesPerView: 1 },
+            640: { slidesPerView: 3 },
           }}
-          loop={true}
+          className="mx-auto w-full"
         >
-          {review ? (
+          {review.length > 0 && !isLoading ? (
             review.map((ulasan, index) => (
-              <ReviewCard
-                key={index}
-                id={ulasan.penulis.id}
-                avatar={ulasan.penulis.fotoProfil}
-                name={ulasan.penulis.nama}
-                date={new Date(ulasan.dibuatPada).toLocaleDateString("id-ID")}
-                review={ulasan.komentar}
-                rating={ulasan.rating}
-              />
+              <SwiperSlide key={index}>
+                <ReviewCard
+                  key={index}
+                  id={ulasan.penulis.id}
+                  avatar={ulasan.penulis.fotoProfil}
+                  name={ulasan.penulis.nama}
+                  date={new Date(ulasan.dibuatPada).toLocaleDateString("id-ID")}
+                  review={ulasan.komentar}
+                  rating={ulasan.rating}
+                />
+              </SwiperSlide>
             ))
           ) : (
             <div className="mx-auto p-12 w-fit text-center">
@@ -233,7 +228,7 @@ export default function Home() {
               <h1 className="font-bold text-xl">Memuat...</h1>
             </div>
           )}
-        </ReactOwlCarousel>
+        </Swiper>
       </div>
     </>
   );

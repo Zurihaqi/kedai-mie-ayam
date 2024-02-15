@@ -10,9 +10,8 @@ import { signOut } from "next-auth/react";
 import Modal from "@/components/Modal/Modal";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ReactOwlCarousel from "react-owl-carousel";
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 
@@ -134,9 +133,6 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
                 <p className="text-center mt-4 font-semibold text-gray-500">
                   Bergabung: {createdDate}
                 </p>
-                {/* <p className="text-center font-semibold">
-                      Diperbarui: {updatedDate}
-                    </p> */}
               </div>
             </div>
             <div className="lg:min-w-[300px] border-l-2 border-gray-500 px-4 flex flex-col gap-4">
@@ -179,34 +175,28 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
           </h1>
           {(userData.user.kedai.length > 0 && (
             <div className="flex flex-row overflow-hidden">
-              <ReactOwlCarousel
-                className="mx-auto my-8"
-                responsive={{
-                  0: {
-                    autoWidth: true,
-                    margin: 50,
-                    center: true,
-                  },
-                  640: {
-                    items: 3,
-                  },
-                  1024: {
-                    items: 5,
-                  },
+              <Swiper
+                className="mx-auto w-full"
+                centeredSlides={true}
+                breakpoints={{
+                  0: { slidesPerView: 1 },
+                  640: { slidesPerView: 3 },
                 }}
               >
                 {userData.user?.kedai?.map((kedai: any) => (
-                  <Card
-                    key={kedai.id}
-                    id={kedai.id}
-                    image={kedai.gambar}
-                    alt={kedai.namaKedai + "_alt"}
-                    title={kedai.namaKedai}
-                    rating={kedai.averageRating}
-                    reviews={kedai.ulasan?.length}
-                  />
+                  <SwiperSlide key={kedai.id} className="my-6">
+                    <Card
+                      key={kedai.id}
+                      id={kedai.id}
+                      image={kedai.gambar}
+                      alt={kedai.namaKedai + "_alt"}
+                      title={kedai.namaKedai}
+                      rating={kedai.averageRating}
+                      reviews={kedai.ulasan?.length}
+                    />
+                  </SwiperSlide>
                 ))}
-              </ReactOwlCarousel>
+              </Swiper>
             </div>
           )) || (
             <h1 className="font-bold lg:text-xl text-lg text-center">
@@ -225,32 +215,30 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
           </h1>
           {(userData.user.ulasan.length > 0 && (
             <div className="flex flex-row overflow-hidden">
-              <ReactOwlCarousel
-                className="mx-auto px-8"
-                responsive={{
-                  0: {
-                    autoWidth: true,
-                    margin: 50,
-                    center: true,
-                  },
-                  640: {
-                    items: 3,
-                  },
+              <Swiper
+                className="mx-auto w-full"
+                centeredSlides={true}
+                breakpoints={{
+                  0: { slidesPerView: 1 },
+                  640: { slidesPerView: 3 },
                 }}
               >
                 {userData.user?.ulasan?.map((ulasan: any) => (
-                  <ReviewCard
-                    id={userData.user.id}
-                    avatar={userData.user.fotoProfil}
-                    name={userData.user.nama}
-                    date={new Date(ulasan.dibuatPada).toLocaleDateString(
-                      "id-ID"
-                    )}
-                    rating={ulasan.rating}
-                    review={ulasan.komentar}
-                  />
+                  <SwiperSlide key={ulasan.id}>
+                    <ReviewCard
+                      key={ulasan.id}
+                      id={userData.user.id}
+                      avatar={userData.user.fotoProfil}
+                      name={userData.user.nama}
+                      date={new Date(ulasan.dibuatPada).toLocaleDateString(
+                        "id-ID"
+                      )}
+                      rating={ulasan.rating}
+                      review={ulasan.komentar}
+                    />
+                  </SwiperSlide>
                 ))}
-              </ReactOwlCarousel>
+              </Swiper>
             </div>
           )) || (
             <h1 className="font-bold lg:text-xl text-lg text-center">

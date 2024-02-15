@@ -8,8 +8,8 @@ import Link from "next/link";
 export default function Card({ id, image, alt, title, rating, reviews }) {
   return (
     <div
-      className="rounded-xl shadow-lg border-gray-300 border mx-auto card-zoom"
-      style={{ width: 200, height: 300 }}
+      className="rounded-xl shadow-lg border-gray-300 border mx-auto card-zoom pb-4"
+      style={{ width: 200, height: "auto" }}
     >
       <div className="group relative flex justify-center">
         <Image
@@ -32,14 +32,16 @@ export default function Card({ id, image, alt, title, rating, reviews }) {
           </Link>
         </div>
       </div>
-      <div className="px-6 mt-4">
-        <div className="font-bold text-lg" style={{ height: 50 }}>
-          {title}
+      <div className="h-fit">
+        <div className="px-6 mt-4">
+          <div className="font-bold text-lg" style={{ height: "auto" }}>
+            {title}
+          </div>
         </div>
-      </div>
-      <div className="px-6">
-        <FontAwesomeIcon icon={faStar} className="text-amber-300" /> {rating}{" "}
-        <span>• {reviews} ulasan</span>
+        <div className="px-6">
+          <FontAwesomeIcon icon={faStar} className="text-amber-300" /> {rating}{" "}
+          <span>• {reviews} ulasan</span>
+        </div>
       </div>
     </div>
   );
