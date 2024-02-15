@@ -95,7 +95,11 @@ export async function PATCH(req: NextRequest) {
 
     if (fotoProfil) {
       const fileBuffer = await fotoProfil.arrayBuffer();
-      const fileStream = Buffer.from(fileBuffer);
+
+      var mime = fotoProfil.type;
+      var encoding = "base64";
+      var base64Data = Buffer.from(fileBuffer).toString("base64");
+      var fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
 
       if (userExist.profilPublicId) {
         cloudinary.v2.uploader.destroy(userExist.profilPublicId);
@@ -112,18 +116,14 @@ export async function PATCH(req: NextRequest) {
             },
             (error, result) => {
               if (error) {
-                console.error(
-                  "Error uploading to Cloudinary:",
-                  error,
-                  fileStream
-                );
+                console.error("Error uploading to Cloudinary:", error);
                 reject(error);
               }
               publicId = result.public_id;
               resolve(result.secure_url);
             }
           )
-          .end(fileStream);
+          .end(fileUri);
       });
 
       if (!uploadedImage) {

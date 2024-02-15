@@ -100,7 +100,11 @@ export async function POST(req: NextRequest) {
 
     if (gambar) {
       const fileBuffer = await gambar.arrayBuffer();
-      const fileStream = Buffer.from(fileBuffer);
+
+      var mime = gambar.type;
+      var encoding = "base64";
+      var base64Data = Buffer.from(fileBuffer).toString("base64");
+      var fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
 
       uploadedImage = await new Promise<string>((resolve, reject) => {
         cloudinary.v2.uploader
@@ -120,7 +124,7 @@ export async function POST(req: NextRequest) {
               resolve(result.secure_url);
             }
           )
-          .end(fileStream);
+          .end(fileUri);
       });
 
       if (!uploadedImage) {
@@ -230,7 +234,11 @@ export async function PATCH(req: NextRequest) {
 
     if (gambar) {
       const fileBuffer = await gambar.arrayBuffer();
-      const fileStream = Buffer.from(fileBuffer);
+
+      var mime = gambar.type;
+      var encoding = "base64";
+      var base64Data = Buffer.from(fileBuffer).toString("base64");
+      var fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
 
       uploadedImage = await new Promise<string>((resolve, reject) => {
         cloudinary.v2.uploader
@@ -250,7 +258,7 @@ export async function PATCH(req: NextRequest) {
               resolve(result.secure_url);
             }
           )
-          .end(fileStream);
+          .end(fileUri);
       });
 
       if (!uploadedImage) {
