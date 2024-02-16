@@ -70,7 +70,7 @@ export default function ReviewCard({
         />
         <div className="mx-2 mt-1">
           <p className="font-bold hover:underline underline-offset-2 underline-black">
-            <Link href={`profile/view/${id}`}>{name}</Link>
+            <Link href={`/profile/view/${id}`}>{name}</Link>
           </p>
           <p>{date}</p>
         </div>
@@ -78,7 +78,7 @@ export default function ReviewCard({
       <div className="px-4 py-2">
         <div className="font-bold text-lg">{review}</div>
         <Link
-          href={`kedai/detail/${idKedai}`}
+          href={`/kedai/detail/${idKedai}`}
           className="hover:underline underline-offset-2 underline-black"
         >
           {namaKedai}
