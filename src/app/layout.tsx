@@ -22,6 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="icon" href="/icon.png" sizes="any" />
+        <link rel="preload" href="/spinner.gif" as="image" />
+        <link rel="preload" href="/404.svg" as="image" />
+        <link rel="preload" href="/default_pfp.png" as="image" />
       </head>
       <body>
         <NextAuthProvider>
