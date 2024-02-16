@@ -34,7 +34,7 @@ export default function Card({ id, image, alt, title, rating, reviews }) {
       </div>
       <div className="h-fit">
         <div className="px-6 mt-4">
-          <div className="font-bold text-lg" style={{ height: "auto" }}>
+          <div className="font-bold text-base" style={{ height: "auto" }}>
             {title}
           </div>
         </div>

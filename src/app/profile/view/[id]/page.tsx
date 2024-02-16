@@ -176,6 +176,7 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
           {(userData.user.kedai.length > 0 && (
             <div className="flex flex-row overflow-hidden">
               <Swiper
+                key={userData.user.kedai.id}
                 className="mx-auto w-full"
                 centeredSlides={true}
                 breakpoints={{
@@ -216,6 +217,7 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
           {(userData.user.ulasan.length > 0 && (
             <div className="flex flex-row overflow-hidden">
               <Swiper
+                key={userData.user.ulasan.id}
                 className="mx-auto w-full"
                 centeredSlides={true}
                 breakpoints={{
@@ -235,6 +237,8 @@ export default function ViewProfile({ params }: { params: { id: string } }) {
                       )}
                       rating={ulasan.rating}
                       review={ulasan.komentar}
+                      idKedai={ulasan.kedai.id}
+                      namaKedai={ulasan.kedai.namaKedai}
                     />
                   </SwiperSlide>
                 ))}

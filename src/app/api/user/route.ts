@@ -23,7 +23,13 @@ export async function GET(req: NextRequest) {
           },
         },
         ulasan: {
-          select: { komentar: true, rating: true, dibuatPada: true },
+          select: {
+            id: true,
+            komentar: true,
+            rating: true,
+            dibuatPada: true,
+            kedai: true,
+          },
         },
       },
     });
@@ -31,8 +37,9 @@ export async function GET(req: NextRequest) {
     if (!user) throw new Error("Pengguna tidak ditemukan!");
     const kedaiWithAvgRating = user.kedai.map((k) => {
       const totalRating = k.ulasan.reduce((acc, cur) => acc + cur.rating, 0);
-      const averageRating =
-        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0;
+      const averageRating = (
+        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0
+      ).toFixed(1);
       return { ...k, averageRating };
     });
 
@@ -40,8 +47,9 @@ export async function GET(req: NextRequest) {
       (acc, cur) => acc + cur.rating,
       0
     );
-    const averageUserRating =
-      user.ulasan.length > 0 ? totalUserRating / user.ulasan.length : 0;
+    const averageUserRating = (
+      user.ulasan.length > 0 ? totalUserRating / user.ulasan.length : 0
+    ).toFixed(1);
 
     return NextResponse.json(
       { user: { ...user, averageUserRating, kedai: kedaiWithAvgRating } },

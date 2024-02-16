@@ -6,7 +6,16 @@ import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import { faStarHalfAlt as halfStar } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
-export default function ReviewCard({ id, avatar, name, date, review, rating }) {
+export default function ReviewCard({
+  id,
+  avatar,
+  name,
+  date,
+  review,
+  rating,
+  namaKedai,
+  idKedai,
+}) {
   const renderStars = () => {
     const stars = [];
     const totalStars = 5;
@@ -46,8 +55,8 @@ export default function ReviewCard({ id, avatar, name, date, review, rating }) {
 
   return (
     <div
-      className="rounded-xl shadow-lg bg-white border-gray-300 border p-4 mx-auto h-fit"
-      style={{ width: 300 }}
+      className="rounded-xl shadow-lg bg-white border-gray-300 border p-4 mx-auto w-fit"
+      style={{ height: 200 }}
     >
       <div className="flex flex-row border-b-2 pb-4">
         <Image
@@ -66,8 +75,14 @@ export default function ReviewCard({ id, avatar, name, date, review, rating }) {
           <p>{date}</p>
         </div>
       </div>
-      <div className="p-4">
+      <div className="px-4 py-2">
         <div className="font-bold text-lg">{review}</div>
+        <Link
+          href={`kedai/detail/${idKedai}`}
+          className="hover:underline underline-offset-2 underline-black"
+        >
+          {namaKedai}
+        </Link>
       </div>
       <div className="px-4 pb-2">
         {renderStars()} {rating}

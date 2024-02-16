@@ -51,8 +51,9 @@ export async function GET(req: NextRequest) {
 
     const kedai = Allkedai.map((k) => {
       const totalRating = k.ulasan.reduce((acc, cur) => acc + cur.rating, 0);
-      const averageRating =
-        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0;
+      const averageRating = (
+        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0
+      ).toFixed(1);
       return { ...k, averageRating };
     });
 

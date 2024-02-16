@@ -19,8 +19,9 @@ export async function GET(req: NextRequest) {
 
     const kedaiWithAvgRating = popularKedai.map((k) => {
       const totalRating = k.ulasan.reduce((acc, cur) => acc + cur.rating, 0);
-      const averageRating =
-        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0;
+      const averageRating = (
+        k.ulasan.length > 0 ? totalRating / k.ulasan.length : 0
+      ).toFixed(1);
       return { ...k, averageRating };
     });
 
@@ -29,6 +30,7 @@ export async function GET(req: NextRequest) {
       orderBy: { dibuatPada: "desc" },
       include: {
         penulis: { select: { id: true, nama: true, fotoProfil: true } },
+        kedai: { select: { id: true, namaKedai: true } },
       },
     });
 

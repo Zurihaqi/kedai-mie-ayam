@@ -211,6 +211,8 @@ export default function Homepage() {
                   date={new Date(ulasan.dibuatPada).toLocaleDateString("id-ID")}
                   review={ulasan.komentar}
                   rating={ulasan.rating}
+                  namaKedai={ulasan.kedai.namaKedai}
+                  idKedai={ulasan.kedai.id}
                 />
               </SwiperSlide>
             ))

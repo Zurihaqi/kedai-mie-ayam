@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 
     const response = {
       ulasan: ulasan,
-      averageRating: averageRating,
+      averageRating: averageRating.toFixed(1),
     };
 
     return NextResponse.json({ ulasan: response }, { status: 200 });
@@ -52,6 +52,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { komentar, rating, idKedai } = body;
     const idPenulis = session.user?.id;
+
+    if (rating > 5 || rating < 0)
+      throw new Error("Masukan angka rating yang valid.");
 
     const kedai = await prisma.kedai.findUnique({
       where: {
