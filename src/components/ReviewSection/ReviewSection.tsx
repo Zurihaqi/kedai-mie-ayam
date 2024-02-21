@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import Modal from "../Modal/Modal";
 import Link from "next/link";
+import formatDateDistance from "@/util/formatDateDistance";
 
 interface ReviewSummaryProps {
   ratings: number[];
@@ -121,7 +122,7 @@ const Review = ({
         </div>
         <div className="">
           <p className="text-gray-500 flex-1">
-            {new Date(dibuatPada).toLocaleDateString("id-ID")}
+            {formatDateDistance(dibuatPada)}
           </p>
         </div>
       </div>
@@ -140,7 +141,7 @@ const Review = ({
 export default function ReviewSection({ initialUlasanData, idKedai }) {
   const [ulasanData, setUlasanData] = useState(initialUlasanData);
   const [selectedUlasanId, setSelectedUlasanId] = useState(0);
-  const [sortBy, setSortBy] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [isTextareaVisible, setTextareaVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
@@ -173,9 +174,9 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
 
       setIsLoading(false);
       setShowModal(false);
-      updateUlasanData();
-
       toast.success(res.success);
+
+      return updateUlasanData();
     } catch (error: any) {
       setIsLoading(false);
       setShowModal(false);
@@ -189,7 +190,7 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
         method: "GET",
       });
       const data = await response.json();
-      setUlasanData(data.ulasan.ulasan);
+      return setUlasanData(data.ulasan.ulasan);
     } catch (error) {
       return toast.error(error.message);
     }
@@ -321,9 +322,9 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
         setReview("");
         setRating(0);
 
-        updateUlasanData();
+        toast.success(response.success);
 
-        return toast.success(response.success);
+        return updateUlasanData();
       }
 
       throw new Error(response.error);
@@ -432,7 +433,7 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
                 rating={review.rating}
                 komentar={review.komentar}
                 dibuatPada={review.dibuatPada}
-                openModal={handleOpenModal(review.id)}
+                openModal={() => handleOpenModal(review.id)}
               />
             ))}
             {!(currentReviews.length > 0) && (
