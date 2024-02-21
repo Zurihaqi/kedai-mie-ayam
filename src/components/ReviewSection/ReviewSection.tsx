@@ -139,6 +139,7 @@ const Review = ({
 
 export default function ReviewSection({ initialUlasanData, idKedai }) {
   const [ulasanData, setUlasanData] = useState(initialUlasanData);
+  const [selectedUlasanId, setSelectedUlasanId] = useState(0);
   const [sortBy, setSortBy] = useState("");
   const [isTextareaVisible, setTextareaVisible] = useState(false);
   const [rating, setRating] = useState(0);
@@ -154,14 +155,15 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
     setShowModal(false);
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (id: number) => {
+    setSelectedUlasanId(id);
     setShowModal(!showModal);
   };
 
   const handleDeleteButton = async () => {
     setIsLoading(true);
     try {
-      const request = await fetch(`/api/ulasan`, {
+      const request = await fetch(`/api/ulasan?id=${selectedUlasanId}`, {
         method: "DELETE",
       });
 
@@ -430,7 +432,7 @@ export default function ReviewSection({ initialUlasanData, idKedai }) {
                 rating={review.rating}
                 komentar={review.komentar}
                 dibuatPada={review.dibuatPada}
-                openModal={handleOpenModal}
+                openModal={handleOpenModal(review.id)}
               />
             ))}
             {!(currentReviews.length > 0) && (

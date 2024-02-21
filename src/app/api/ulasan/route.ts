@@ -105,14 +105,8 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const findUlasan = await prisma.ulasan.findFirst({
-      where: { idPenulis: +session.user?.id },
-    });
-
-    if (!findUlasan) throw new Error("Ulasan tidak ditemukan.");
-
     const deleteUlasan = await prisma.ulasan.delete({
-      where: { id: findUlasan.id },
+      where: { id: +id, idPenulis: +session.user.id },
     });
 
     if (!deleteUlasan) throw new Error("Gagal menghapus ulasan.");
